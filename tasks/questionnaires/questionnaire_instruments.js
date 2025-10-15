@@ -280,7 +280,7 @@ export const WSAS = (i, total) => {
 
       // Return details for questionnaire requirement document
       return {
-        constiable_name: "retired_check",
+        variable_name: "retired_check",
         type: "Checkbox",
         text: 'If you\'re retired or choose not to have a job for reasons unrelated to your problem, tick here',
         possible_values: "true<br>false"
