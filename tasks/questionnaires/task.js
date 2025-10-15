@@ -22,11 +22,12 @@ const questionnaires_instructions = (total) => {
 /**
  * Creates a timeline of questionnaires with resumption support
  *
- * @param {Object} settings - Configuration object with questionnaire_list and resumptionRules
+ * @param {Object} settings - Configuration object with questionnaire_list, session, and resumptionRules
  * @returns {Array<Object>} Timeline array of jsPsych trial objects
  *
  * @description
- * - Takes a list of questionnaire names from settings.questionnaire_list
+ * - Selects questionnaire list based on session if sessionQuestionnaires is defined
+ * - Falls back to questionnaire_list if session not found
  * - Applies resumption logic to skip completed questionnaires
  * - Each questionnaire function is called with (position, total)
  * - Last questionnaire calls updateState("no_resume") to prevent further resumption
@@ -36,7 +37,24 @@ export function createQuestionnairesTimeline(settings) {
     const lastState = getResumptionState();
     console.log("Questionnaires resumption - last state:", lastState);
 
-    let questionnaire_list = settings.questionnaire_list || [];
+    // Determine questionnaire list based on session
+    let questionnaire_list;
+
+    if (settings.session_questionnaires && settings.session) {
+        // Use session-specific questionnaire list if available
+        questionnaire_list = settings.session_questionnaires[settings.session];
+
+        if (questionnaire_list) {
+            console.log(`Using session-specific questionnaires for session "${settings.session}":`, questionnaire_list);
+        } else {
+            // Session not found in mapping, fall back to default_questionnaires
+            console.warn(`No questionnaires defined for session "${settings.session}", using default_questionnaires`);
+            questionnaire_list = settings.default_questionnaires || [];
+        }
+    } else {
+        // No session mapping provided, use default_questionnaires directly
+        questionnaire_list = settings.default_questionnaires || [];
+    }
 
     // Apply resumption logic if enabled
     if (settings.__task.resumptionRules?.enabled && lastState && lastState !== "none") {

@@ -397,7 +397,12 @@ export const TaskRegistry = {
     createTimeline: createQuestionnairesTimeline,
     computeBonus: () => 0, // No bonus computation for this task
     defaultConfig: {
-      questionnaire_list: ["PHQ", "GAD", "PVSS", "BADS", "hopelessness", "RRS_brooding", "PERS_negAct"],
+      default_questionnaires: ["PHQ", "GAD", "PVSS", "BADS", "hopelessness", "RRS_brooding", "PERS_negAct"],
+      // Session-specific questionnaire lists
+      session_questionnaires: {
+        "screening": ["PHQ", "WSAS", "ICECAP", "BFI"],
+        "wk24": ["PHQ", "GAD", "WSAS", "ICECAP", "PVSS", "BADS", "hopelessness", "RRS_brooding", "PERS_negAct"]
+      }
     },
     requirements: {
       css: ['@tasks/questionnaires/styles.css'],
@@ -414,7 +419,8 @@ export const TaskRegistry = {
         }
     },
     configOptions: {
-      questionnaire_list: "Array of questionnaire names to include. Available: demographics, PHQ, GAD, WSAS, ICECAP, BFI, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct. Order of names determines order of presentation. Default is [\"PHQ\", \"GAD\", \"PVSS\", \"BADS\", \"hopelessness\", \"RRS_brooding\", \"PERS_negAct\"]."
+      default_questionnaires: "Array of questionnaire names to include. Available: PHQ, GAD, WSAS, ICECAP, BFI, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct. Order of names determines order of presentation. Default is full battery.",
+      session_questionnaires: "Object mapping session names to questionnaire lists. If provided and session is set, overrides default_questionnaires. Pre-configured for: screening, wk24."
     }
   }
 };
