@@ -10,6 +10,7 @@ import { createControlTimeline, computeRelativeControlBonus } from '@tasks/contr
 import { createOpenTextTimeline } from '@tasks/open-text/index.js';
 import { createReversalTimeline, computeRelativeReversalBonus } from '@tasks/reversal/index.js';
 import { createAcceptabilityTimeline } from '@tasks/acceptability-judgment/index.js';
+import { createQuestionnairesTimeline } from '@tasks/questionnaires/index.js';
 
 export const TaskRegistry = {
   PILT: {
@@ -388,6 +389,38 @@ export const TaskRegistry = {
     },
     resumptionRules: {
         enabled: false,
+    }
+  },
+  questionnaires: {
+    name: 'Questionnaires',
+    description: 'A demographics and psychological questionnaires battery',
+    createTimeline: createQuestionnairesTimeline,
+    computeBonus: () => 0, // No bonus computation for this task
+    defaultConfig: {
+      default_questionnaires: ["PHQ", "GAD", "PVSS", "BADS", "hopelessness", "RRS_brooding", "PERS_negAct"],
+      // Session-specific questionnaire lists
+      session_questionnaires: {
+        "screening": ["PHQ", "WSAS", "ICECAP", "BFI"],
+        "wk24": ["PHQ", "GAD", "WSAS", "ICECAP", "PVSS", "BADS", "hopelessness", "RRS_brooding", "PERS_negAct"]
+      }
+    },
+    requirements: {
+      css: ['@tasks/questionnaires/styles.css'],
+    },
+    resumptionRules: {
+        enabled: true,
+        granularity: 'questionnaire',
+        // Pattern to match: PHQ_start, GAD_start, WSAS_start, etc.
+        statePattern: /^(PHQ|GAD|WSAS|ICECAP|BFI|PVSS|BADS|hopelessness|RRS_brooding|PERS_negAct)_start$/,
+        // Extract which questionnaire was last started
+        extractProgress: (lastState, regex) => {
+            const match = lastState.match(regex);
+            return match ? match[1] : null;
+        }
+    },
+    configOptions: {
+      default_questionnaires: "Array of questionnaire names to include. Available: PHQ, GAD, WSAS, ICECAP, BFI, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct. Order of names determines order of presentation. Default is full battery.",
+      session_questionnaires: "Object mapping session names to questionnaire lists. If provided and session is set, overrides default_questionnaires. Pre-configured for: screening, wk24."
     }
   }
 };
