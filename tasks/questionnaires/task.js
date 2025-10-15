@@ -53,8 +53,8 @@ export function createQuestionnairesTimeline(settings) {
         }
     } else {
         // No session mapping provided, use default_questionnaires directly
-        console.warn(`No session provided, using default_questionnaires:`, questionnaire_list);
         questionnaire_list = settings.default_questionnaires || [];
+        console.warn(`No session provided, using default_questionnaires:`, questionnaire_list);
     }
 
     // Apply resumption logic if enabled
