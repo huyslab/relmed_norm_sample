@@ -31,6 +31,7 @@ export const ModuleRegistry = {
             { type: "task", name: "acceptability_judgment", config: { task_name: "wm", game_description: "one-card game you just completed" } },
             { type: "task", name: "open_text" },
             { type: "task", name: "delay_discounting" },
+            { type: "task", name: "questionnaires"},
             { type: "instructions", config: { text: "end_message" } }
         ]
     },
@@ -49,6 +50,7 @@ export const ModuleRegistry = {
             { type: "task", name: "acceptability_judgment", config: { task_name: "control", game_description: "shipping game" } },
             { type: "task", name: "reversal", config: { n_trials: 50 } },
             { type: "task", name: "acceptability_judgment", config: { task_name: "reversal", game_description: "squirrel game" } },
+            { type: "task", name: "questionnaires" },
             { type: "instructions", config: { text: "end_message" } }
         ]
     }
