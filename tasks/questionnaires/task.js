@@ -48,11 +48,12 @@ export function createQuestionnairesTimeline(settings) {
             console.log(`Using session-specific questionnaires for session "${settings.session}":`, questionnaire_list);
         } else {
             // Session not found in mapping, fall back to default_questionnaires
-            console.warn(`No questionnaires defined for session "${settings.session}", using default_questionnaires`);
             questionnaire_list = settings.default_questionnaires || [];
+            console.warn(`No questionnaires defined for session "${settings.session}", using default_questionnaires:`, questionnaire_list);
         }
     } else {
         // No session mapping provided, use default_questionnaires directly
+        console.warn(`No session provided, using default_questionnaires:`, questionnaire_list);
         questionnaire_list = settings.default_questionnaires || [];
     }
 
