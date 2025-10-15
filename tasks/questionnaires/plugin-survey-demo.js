@@ -135,7 +135,7 @@ var jsPsychSurveyDemo = (function (jspsych) {
 
       // Item 1: Age
       html += '<div class="survey-demo-row">';
-      html += '<div class="survey-demo-prompt"><label for="age">What is your age?</label></div>';
+      html += '<div class="survey-demo-prompt"><label for="age">Age</label></div>';
       html += '<div class="survey-demo-response">';
       html += '<input type="number" name="age" min="18" max="100" size="20" required>';
       html += '</div></div>';
