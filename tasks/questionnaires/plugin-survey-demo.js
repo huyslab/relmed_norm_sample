@@ -44,12 +44,11 @@ var jsPsychSurveyDemo = (function (jspsych) {
         width: 100vw;
       }
       .survey-demo-instructions {
-        margin: auto;
         width: 800px;
-        padding: 0 0 0 0;
-        text-align: center;
-        font-size: 15px;
-        line-height: 1.15em;
+        margin: auto;
+        font-size: 16px;
+        line-height: 1.5em;
+        text-align: left;
       }
       .survey-demo-container {
         display: grid;
@@ -58,18 +57,20 @@ var jsPsychSurveyDemo = (function (jspsych) {
         width: 800px;
         margin: auto;
         background-color: #F8F8F8;
-        border-radius: 12px;
+        border-radius: 8px;
       }
       .survey-demo-row {
         display: contents;
-        justify-items: center;
-        text-align: left;
-        font-size: 16px;
-        line-height: 1.5em;
+      }
+      .survey-demo-row:hover div {
+        background-color: #dee8eb;
       }
       .survey-demo-prompt {
         padding: 12px 0 12px 15px;
-        border-top: 2px solid #ffffff;
+        text-align: left;
+        font-size: 15px;
+        line-height: 1.15em;
+        justify-items: center;
       }
       .survey-demo-prompt label {
         padding: 0 8px 0 0;
@@ -77,7 +78,10 @@ var jsPsychSurveyDemo = (function (jspsych) {
       }
       .survey-demo-response {
         padding: 12px 0 12px 0;
-        border-top: 2px solid #ffffff;
+        font-size: 13px;
+        text-align: left;
+        line-height: 1.15em;
+        justify-items: center;
       }
       .survey-demo-response label {
         padding: 0 1em 0 0;
@@ -113,7 +117,7 @@ var jsPsychSurveyDemo = (function (jspsych) {
         margin-top: 5px;
         margin-bottom: 20px;
         margin-right: 0px;
-        font-size: 14px;
+        font-size: 13px;
         color: black;
       }
       </style>`;
@@ -140,8 +144,8 @@ var jsPsychSurveyDemo = (function (jspsych) {
       html += '<div class="survey-demo-row">';
       html += '<div class="survey-demo-prompt"><label for="sex">Sex assigned at birth</label></div>';
       html += '<div class="survey-demo-response">';
-      html += '<label><input type="radio" name="sex" value="Male" required>Male</label><br>';
       html += '<label><input type="radio" name="sex" value="Female" required>Female</label><br>';
+      html += '<label><input type="radio" name="sex" value="Male" required>Male</label><br>';
       html += '</div></div>';
 
       // Item 3: Gender
