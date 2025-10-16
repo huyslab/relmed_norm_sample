@@ -184,18 +184,18 @@ if (window.context == "relmed") {
             stimulus: `<p>You may not be following the study instructions as intended, as you didn't respond more than 15 times.</p>
                 <p>Unfortunately, you cannot continue with this study.</p>
                 <p>If you believe this is a mistake, please email haoyang.lu@ucl.ac.uk, explaining the circumstances.</p>
-                <p>Please return this study on <a href="https://app.prolific.com/">Prolific</a>.</p>
-                <p>You may now close this tab.</p>
+                <p>Press the space bar to continue.</p>
             `
             }
         ],
-        choices: ["NO_KEYS"],
+        choices: ["space"],
         data: {
           trialphase: 'kick-out'
+        },
+        on_finish: function() {
+            // Redirect to Prolific
+            window.location.href = 'https://app.prolific.com/submissions/complete?cc=C1APQN7T';
         }
-    }
-    
-}
 
 /**
  * Combined kick-out trial timeline
