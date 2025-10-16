@@ -78,7 +78,7 @@
         import { enterExperiment } from '@utils/index.js';
 
         // Get parameters from URL
-        window.participantID = new URLSearchParams(window.location.search).get('participant_id') || '';
+        window.participantID = new URLSearchParams(window.location.search).get('PROLIFIC_PID') || '';
         window.simulating = window.participantID.includes("simulate") || false;
         console.log(window.simulating);
 
@@ -93,6 +93,8 @@
 
         // Configurations
         const session = new URLSearchParams(window.location.search).get('session') || 'wk0';
+        const module = new URLSearchParams(window.location.search).get('module') ;
+
         const settings = {
             sequence: session,
             session: session
@@ -101,15 +103,12 @@
         // Function to run the experiment
         async function runExperiment() {
             try {
-                // Which module to run
-                const module_name = session == "screening" ? 'screening' : 'full_battery';
-
                 // Get module information
-                const moduleInfo = getModuleInfo(module_name);
+                const moduleInfo = getModuleInfo(module);
                 console.log('Module info:', moduleInfo);
 
                 // Create the timeline
-                const timeline = await createModuleTimeline(module_name, settings);
+                const timeline = await createModuleTimeline(module, settings);
                 console.log('Timeline created:', timeline);
                 
                 const exitFullscreen = {
