@@ -82,12 +82,12 @@ export const messages = {
     quests:  {
         start_message: MODULE_START_MESSAGE,
         end_message: {
-            message: MODULE_END_MESSAGE,
-            on_start: `<p>Thank you for completing this session!</p>
+            message: (setting) => {`<p>Thank you for completing this session!</p>
                 <p>When you click next, your data will be uploaded to the secure server. This may take up to two minutes. Please don't close or refresh your browser at this time.</p>
                 <p>Once the data is uploaded, you will be redirected to Prolific.</p>` +
-                session == "wk0" ? `<p>The next session will take place in two weeks. You will receive a notification from Prolific when it is available. You will have three days to complete it.</p>` :
-                "",
+                settings.session == "wk0" ? `<p>The next session will take place in two weeks. You will receive a notification from Prolific when it is available. You will have three days to complete it.</p>` :
+                ""},
+            on_start: endExperiment,
 
         }
     },
