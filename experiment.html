@@ -111,8 +111,7 @@
         async function runExperiment() {
             try {
                 // Which module to run
-                // const module_name = session == "screening" ? 'screening' : 'full_battery';
-                const module_name = 'testing';
+                const module_name = session == "screening" ? 'screening' : 'full_battery';
 
                 // Get module information
                 const moduleInfo = getModuleInfo(module_name);
