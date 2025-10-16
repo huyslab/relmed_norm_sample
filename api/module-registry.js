@@ -43,6 +43,7 @@ export const ModuleRegistry = {
         }, 
         elements: [
             { type: "instructions", config: { text: "start_message" } },
+            { type: "task", name: "instruction_video" },
             { type: "task", name: "max_press_test" },
             { type: "task", name: "PILT", config: {present_pavlovian: false} },
             { type: "task", name: "acceptability_judgment", config: { task_name: "PILT", game_description: "card choosing game" } },
