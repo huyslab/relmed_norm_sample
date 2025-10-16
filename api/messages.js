@@ -58,8 +58,8 @@ export const messages = {
     },
     screening: {
         start_message: [
-            `<p><b>Welcome to the first RELMED training session!</b></p>
-            <p>Over the next twenty minutes, you will try out the main tasks comprising the home assessments in the RELMED study.
+            `<p><b>Welcome to the first study session!</b></p>
+            <p>Over the next twenty minutes, you will try out the main games of this study.
             <p>You will start by playing a few simple trial-and-error learning games. Your goal in each game is to win as many coins as possible.</p>
             <p>The games may feel a bit fast-paced because we're interested in your quick, intuitive decisions. Since they're designed around learning from experience, making mistakes is completely expected. Over time, you'll figure out better choices and improve your performance.</p>
             `,
@@ -67,12 +67,14 @@ export const messages = {
             <p>If at some point you are taking too long to respond, you might see a message like this:</p><br>
             ${formatted_warning_msg}
             <br><p>It is perfectly natural to take a bit longer when you are learning something new. However, if you see this message a few times, it may be a sign that you are overthinking your choices.</p>
-            <p>If at any point you feel like you need some assistance, you can find our contact details by pressing the question mark in the top right corner. We are happy to help.</p>`
+            <p>If you end up missing the response deadline too many times, we will have to ask you to return your work to Prolific.</p>`
         ],
         end_message:  {
             message: 
                 `<p>Thank you for completing this module!</p>
-                <p>When you click next, your data will be uploaded to the secure server. This may take up to two minutes. Please don't close or refresh your browser at this time.</p>`,
+                <p>When you click next, your data will be uploaded to the secure server. This may take up to two minutes. Please don't close or refresh your browser at this time.</p>
+                <p>Once the data is uploaded, you will be redirected to Prolific.</p>
+                <p>The next session will take place in one week. You will receive a notification from Prolific when it is available.</p>`,
             on_finish: endExperiment
         }
     }
