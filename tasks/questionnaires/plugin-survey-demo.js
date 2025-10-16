@@ -75,8 +75,9 @@ var jsPsychSurveyDemo = (function (jspsych) {
         padding: 12px 0 12px 15px;
         text-align: left;
         font-size: 15px;
-        line-height: 1.15em;
+        line-height: 1.25em;
         justify-items: center;
+        border-top: 2px solid #ffffff;
       }
       .survey-demo-prompt label {
         padding: 0 8px 0 0;
@@ -84,10 +85,11 @@ var jsPsychSurveyDemo = (function (jspsych) {
       }
       .survey-demo-response {
         padding: 12px 0 12px 0;
-        font-size: 13px;
+        font-size: 14px;
         text-align: left;
-        line-height: 1.15em;
+        line-height: 1.25em;
         justify-items: center;
+        border-top: 2px solid #ffffff;
       }
       .survey-demo-response label {
         padding: 0 1em 0 0;
