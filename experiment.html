@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,7 @@
             }
         }
     </script>
-    
+
     <!-- jsPsych Core Files -->
     <script src="core/jspsych/jspsych.js"></script>
     <script src="core/jspsych/plugin-html-keyboard-response.js"></script>
@@ -28,7 +29,7 @@
     <script src="core/jspsych/plugin-survey-multi-choice.js"></script>
     <script src="core/jspsych/plugin-survey-likert.js"></script>
 
-    
+
     <!-- Task-specific files -->
     <script src="tasks/card-choosing/plugin-card-choosing.js"></script>
     <script src="tasks/control/plugins/plugin-explore-ship.js"></script>
@@ -39,8 +40,9 @@
     <script src="tasks/reversal/plugin-reversal.js"></script>
     <script src="tasks/open-text/plugin-open-text.js"></script>
     <script src="tasks/questionnaires/plugin-survey-template.js"></script>
+    <script src="tasks/questionnaires/plugin-survey-demo.js"></script>
 
-    
+
     <!-- Core utilities -->
     <script type="module" src="core/utils/index.js"></script>
 
@@ -48,30 +50,37 @@
     <link href="core/jspsych/jspsych.css" rel="stylesheet" type="text/css" />
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        
-        #display_element {
+        .jsPsychDE {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
-        
+
         .instructions p {
             width: 700px;
             text-align: left;
-            margin: 1em 0;
+        }
+
+        .instructions td {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        #jspsych-video-button-response-stimulus {
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+            max-width: 100%;
+            display: block;
+            margin: 10px auto;
         }
     </style>
 </head>
+
 <body>
-    <div id="display_element"></div>
-    
+    <div id='display_element' class='jsPsychDE'></div>
+
     <script type="module">
         // Import task registry functions
         import { createModuleTimeline, getModuleInfo } from '@api/index.js';
@@ -85,7 +94,7 @@
         // Initialize jsPsych
         window.jsPsych = initJsPsych({
             display_element: 'display_element',
-            on_finish: function(data) {
+            on_finish: function (data) {
                 // Display results
                 jsPsych.getDisplayElement().innerHTML = session == "screening" ? '<p>Thank you for participating! You may now close this tab.</p>' : '<p>Thank you for participating! Please call the experimenter.</p>';
             }
@@ -102,7 +111,8 @@
         async function runExperiment() {
             try {
                 // Which module to run
-                const module_name = session == "screening" ? 'screening' : 'full_battery';
+                // const module_name = session == "screening" ? 'screening' : 'full_battery';
+                const module_name = 'testing';
 
                 // Get module information
                 const moduleInfo = getModuleInfo(module_name);
@@ -111,32 +121,32 @@
                 // Create the timeline
                 const timeline = await createModuleTimeline(module_name, settings);
                 console.log('Timeline created:', timeline);
-                
+
                 const exitFullscreen = {
                     type: jsPsychFullscreen,
                     fullscreen_mode: false
                 };
-                
+
                 // Create the complete timeline
                 const fullTimeline = [
                     enterExperiment,
                     ...timeline,
                     exitFullscreen
                 ];
-                
+
                 // Run the experiment
                 if (window.simulating) {
                     console.log('Simulating experiment run...');
-                    
+
                     // Simulation options
                     let simulation_options = {
-                            default: {
-                                data: {
-                                    rt: 200,
-                                    speed_up: true,
-                                    speed_up_factor: 10,
-                                }
+                        default: {
+                            data: {
+                                rt: 200,
+                                speed_up: true,
+                                speed_up_factor: 10,
                             }
+                        }
                     }
 
                     await jsPsych.simulate(fullTimeline, "visual", simulation_options);
@@ -144,7 +154,7 @@
                     console.log('Running experiment...');
                     await jsPsych.run(fullTimeline);
                 }
-                
+
             } catch (error) {
                 console.error('Error running experiment:', error);
                 jsPsych.getDisplayElement().innerHTML = `
@@ -162,4 +172,5 @@
         window.addEventListener('load', runExperiment);
     </script>
 </body>
+
 </html>

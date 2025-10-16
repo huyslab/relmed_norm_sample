@@ -21,12 +21,12 @@
      http://localhost:8000/examples/questionnaires.html?session=wk0&state=PHQ_start
 
   SESSION-SPECIFIC QUESTIONNAIRES:
-  - screening: PHQ, WSAS, ICECAP, BFI (4 questionnaires)
+  - screening: demographics, PHQ, WSAS, ICECAP, BFI (5 questionnaires)
   - wk0, wk2, wk4, wk28: PHQ, GAD, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct (7 questionnaires; default list)
   - wk24: PHQ, GAD, WSAS, ICECAP, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct (9 questionnaires)
 
   AVAILABLE QUESTIONNAIRES:
-  PHQ, GAD, WSAS, ICECAP, BFI, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct
+  demographics, PHQ, GAD, WSAS, ICECAP, BFI, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct
 -->
 <html lang="en">
 <head>
@@ -59,6 +59,7 @@
 
     <!-- Custom questionnaire plugin -->
     <script src="../tasks/questionnaires/plugin-survey-template.js"></script>
+    <script src="../tasks/questionnaires/plugin-survey-demo.js"></script>
 
     <!-- Core utilities -->
     <script type="module" src="../core/utils/index.js"></script>
@@ -68,29 +69,35 @@
     <link href="/tasks/questionnaires/styles.css" rel="stylesheet" type="text/css" />
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        
-        #display_element {
+        .jsPsychDE {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
-        
+
         .instructions p {
             width: 700px;
             text-align: left;
-            margin: 1em 0;
+        }
+
+        .instructions td {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        #jspsych-video-button-response-stimulus {
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+            max-width: 100%;
+            display: block;
+            margin: 10px auto;
         }
     </style>
 </head>
 <body>
-    <div id="display_element"></div>
+    <div id='display_element' class='jsPsychDE'></div>
 
     <script type="module">
         // Import task registry functions
@@ -114,7 +121,7 @@
                 // Show response data in console
                 const responses = data.filterCustom(function(trial) {
                     const trialphase = trial.trialphase
-                    return trialphase !== undefined && trialphase.match(/PHQ|GAD|PVSS|BADS|hopelessness|RRS_brooding|PERS_negAct|WSAS|ICECAP|BFI/)
+                    return trialphase !== undefined && trialphase.match(/demographics|PHQ|GAD|PVSS|BADS|hopelessness|RRS_brooding|PERS_negAct|WSAS|ICECAP|BFI/)
                 });
                 console.log('Questionnaire responses:', responses.values());
             }
