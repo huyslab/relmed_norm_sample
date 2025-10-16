@@ -195,9 +195,15 @@ function endExperiment() {
     window.removeEventListener('beforeunload', preventRefresh);
 
     // Save data with end task message for RELMED context
-    saveDataREDCap(10, {
-        message: "endTask"
-    });
+    saveDataREDCap(
+        10, 
+        {
+            message: "endTask"
+        },
+        () => {
+            window.location.href = "https://app.prolific.com/submissions/complete?cc=C1AMSNUV"
+        }
+    );
 }
 
 // Export functions for use in other modules
