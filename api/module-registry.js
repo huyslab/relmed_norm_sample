@@ -2,8 +2,8 @@
 // Each module can contain one or more tasks, and each task can have its own configuration settings.
 
 export const ModuleRegistry = {
-    full_battery: {
-        name: "Full RELEMD Task Battery",
+    reversal: {
+        name: "Reversal Learning Task",
         moduleConfig: { // Settings that apply to all tasks in the module unless overridden
             session: "wk0",
             sequence: "wk0"
@@ -12,6 +12,17 @@ export const ModuleRegistry = {
             { type: "instructions", config: { text: "start_message" } },
             { type: "task", name: "reversal"},
             { type: "task", name: "acceptability_judgment", config: { task_name: "reversal", game_description: "squirrel game" } },
+            { type: "instructions", config: { text: "end_message" } }
+        ]
+    },
+    pilt_to_test: {
+        name: "Pre-PILT conditioning, PILT, vigour, PIT and tests",
+        moduleConfig: { // Settings that apply to all tasks in the module unless overridden
+            session: "wk0",
+            sequence: "wk0"
+        }, 
+        elements: [
+            { type: "instructions", config: { text: "start_message" } },
             { type: "task", name: "max_press_test" },
             { type: "task", name: "pavlovian_lottery" },
             { type: "task", name: "PILT" },
@@ -22,13 +33,44 @@ export const ModuleRegistry = {
             { type: "task", name: "acceptability_judgment", config: { task_name: "PIT", game_description: "piggy-bank game in cloudy space" } },
             { type: "task", name: "vigour_test"},
             { type: "task", name: "post_PILT_test"},
-            { type: "instructions", config: { text: "break_message" } },
+            { type: "instructions", config: { text: "end_message" } }
+        ]
+    },
+    control: {
+        name: "Control Task",
+        moduleConfig: { // Settings that apply to all tasks in the module unless overridden
+            session: "wk0",
+            sequence: "wk0"
+        },
+        elements: [
+            { type: "instructions", config: { text: "start_message" } },
             { type: "task", name: "control"},
             { type: "task", name: "acceptability_judgment", config: { task_name: "control", game_description: "shipping game" } },
-            { type: "instructions", config: { text: "break_message" } },
+            { type: "instructions", config: { text: "end_message" } }
+        ]
+    },
+    wm: {
+        name: "Working Memory Task",
+        moduleConfig: { // Settings that apply to all tasks in the module unless overridden
+            session : "wk0",
+            sequence: "wk0"
+        },
+        elements: [
+            { type: "instructions", config: { text: "start_message" } },
             { type: "task", name: "WM" },
             { type: "task", name: "post_WM_test"},
             { type: "task", name: "acceptability_judgment", config: { task_name: "wm", game_description: "one-card game you just completed" } },
+            { type: "instructions", config: { text: "end_message" } }
+        ]
+    },
+    quests: {
+        name: "Questionnaires and Open Text",
+        moduleConfig: { // Settings that apply to all tasks in the module unless overridden
+            session: "wk0",
+            sequence: "wk0"
+        }, 
+        elements: [
+            { type: "instructions", config: { text: "start_message" } },
             { type: "task", name: "open_text" },
             { type: "task", name: "delay_discounting" },
             { type: "task", name: "questionnaires"},
