@@ -11,6 +11,7 @@ import { createOpenTextTimeline } from '@tasks/open-text/index.js';
 import { createReversalTimeline, computeRelativeReversalBonus } from '@tasks/reversal/index.js';
 import { createAcceptabilityTimeline } from '@tasks/acceptability-judgment/index.js';
 import { createQuestionnairesTimeline } from '@tasks/questionnaires/index.js';
+import { createInstructionVideoTimeline } from '@tasks/instruction-video/index.js';
 
 export const TaskRegistry = {
   PILT: {
@@ -400,7 +401,7 @@ export const TaskRegistry = {
       default_questionnaires: ["PHQ", "GAD", "PVSS", "BADS", "hopelessness", "RRS_brooding", "PERS_negAct"],
       // Session-specific questionnaire lists
       session_questionnaires: {
-        "screening": ["PHQ", "WSAS", "ICECAP", "BFI"],
+        "screening": ["demographics", "PHQ", "WSAS", "ICECAP", "BFI"],
         "wk24": ["PHQ", "GAD", "WSAS", "ICECAP", "PVSS", "BADS", "hopelessness", "RRS_brooding", "PERS_negAct"]
       }
     },
@@ -411,7 +412,7 @@ export const TaskRegistry = {
         enabled: true,
         granularity: 'questionnaire',
         // Pattern to match: PHQ_start, GAD_start, WSAS_start, etc.
-        statePattern: /^(PHQ|GAD|WSAS|ICECAP|BFI|PVSS|BADS|hopelessness|RRS_brooding|PERS_negAct)_start$/,
+        statePattern: /^(demographics|PHQ|GAD|WSAS|ICECAP|BFI|PVSS|BADS|hopelessness|RRS_brooding|PERS_negAct)_start$/,
         // Extract which questionnaire was last started
         extractProgress: (lastState, regex) => {
             const match = lastState.match(regex);
@@ -419,8 +420,28 @@ export const TaskRegistry = {
         }
     },
     configOptions: {
-      default_questionnaires: "Array of questionnaire names to include. Available: PHQ, GAD, WSAS, ICECAP, BFI, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct. Order of names determines order of presentation. Default is full battery.",
+      default_questionnaires: "Array of questionnaire names to include. Available: demographics, PHQ, GAD, WSAS, ICECAP, BFI, PVSS, BADS, hopelessness, RRS_brooding, PERS_negAct. Order of names determines order of presentation. Default is for wk0, wk2, wk4, and wk28.",
       session_questionnaires: "Object mapping session names to questionnaire lists. If provided and session is set, overrides default_questionnaires. Pre-configured for: screening, wk24."
+    }
+  },
+  instruction_video: {
+    name: 'Instruction Video',
+    description: 'Watch an instruction video explaining the basics of the tasks',
+    createTimeline: createInstructionVideoTimeline,
+    computeBonus: () => 0, // No bonus computation for this task
+    defaultConfig: {
+      videos: ["./assets/task_instruction_short.mp4"],
+      video_height: 540
+    },
+    requirements: {
+      css: ['@tasks/instruction-video/styles.css'],
+    },
+    resumptionRules: {
+        enabled: true,
+    },
+    configOptions: {
+      video: "Video file path or URL to be played. Default is ['./assets/task_instruction_short.mp4'].",
+      video_height: "Height of the video player in pixels. Default is 540."
     }
   }
 };

@@ -1,4 +1,5 @@
 import { updateState } from '@utils/index.js';
+import { demographics_html } from './demo_items.js';
 
 // Option labels for questionnaires
 const likert_PHQ = [
@@ -429,3 +430,19 @@ export const PERS_negAct = (i, total) => {
     }
   };
 }; 
+
+export const demographics = (i, total) => {
+  return {
+    type: jsPsychSurveyDemo,
+    instructions: [`<h2>Questionnaire ${i} out of ${total}: Demographics</h2>` +
+      "<p>Please answer the questions below. <font color=\"#c87606\">Your answers will not affect your payment or bonus.</font></p>"
+    ],
+    body: demographics_html,
+    data: {
+      trialphase: "demographics"
+    },
+    on_start: () => {
+      updateState("demographics_start");
+    }
+  };
+};
