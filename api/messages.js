@@ -32,7 +32,7 @@ const formatted_warning_msg = `
 const MODULE_END_MESSAGE = `<p>Thank you for completing this module!</p>
     <p>When you click next, your data will be uploaded to the secure server. This may take up to two minutes. Please don't close or refresh your browser at this time.</p>
     <p>Once the data is uploaded, you will be redirected to Prolific.</p>
-    <p>The next module will immeidately be available to you. If you can't find it, please check you email for the invitation.</p>`
+    <p>The next module will immediately be available to you. If you can't find it, please check your email for the invitation.</p>`
 
 const MODULE_START_MESSAGE = `<p>Welcome to this module!</p>
     <p>Press continue to read the instructions for the first game.</p>`
