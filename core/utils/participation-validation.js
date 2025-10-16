@@ -196,7 +196,8 @@ if (window.context == "relmed") {
             // Redirect to Prolific
             window.location.href = 'https://app.prolific.com/submissions/complete?cc=C1APQN7T';
         }
-
+    }
+}
 /**
  * Combined kick-out trial timeline
  * Includes both pre-warning and final kick-out stages
