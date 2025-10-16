@@ -52,7 +52,7 @@ function preparePILTInstructions(settings) {
                 <p>Some cards are luckier than others. Your goal is to collect as much game money as possible${window.task == "screening" ? "" : " and avoid losing it"}.</p>
                 ${settings.session !== "screening" ? "<p>At the end of this session, you will be paid a bonus based on the sum of coins you collected.</p>" : ""}`,
             `<p>On each turn of this game, you will see two cards.
-                You have ${window.context === "relmed" ? "four" : "three"} seconds to flip one of the two cards.</p>
+                You have four seconds to flip one of the two cards.</p>
                 <p>This will reveal the coin you collect: either 1 pound, 50 pence, or 1 penny.</p>
                 <div style='display: grid;'><table style='width: 200px; grid-column: 2;'><tr>
                 <td><img src='./assets/images/card-choosing/outcomes/1pound.png' style='width:${small_coin_size}px; height:${small_coin_size}px;'></td>
