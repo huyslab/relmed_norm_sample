@@ -141,14 +141,14 @@
                 // Use session-specific questionnaire list
                 // The session parameter is passed to createTaskTimeline and the task will
                 // automatically select the appropriate questionnaire list from sessionQuestionnaires
-                const timeline = await createTaskTimeline('questionnaires', {
-                    session: session
-                });
+                // const timeline = await createTaskTimeline('questionnaires', {
+                //     session: session
+                // });
 
                 // Alternative: Override with custom list (ignores session mapping)
-                // const timeline = await createTaskTimeline('questionnaires', {
-                //     questionnaire_list: ["PHQ", "GAD"]
-                // });
+                const timeline = await createTaskTimeline('questionnaires', {
+                    default_questionnaires: ["demographics"]
+                });
 
                 console.log('Timeline created:', timeline);
 
