@@ -127,76 +127,31 @@ const pre_kick_out_warning = {
  * Context-specific kick-out warning configuration
  * Different behavior for RELMED vs Prolific participants
  */
-let kick_out_warning = {}
-if (window.context == "relmed") {
-    console.log("Relmed context detected");
-    kick_out_warning = {
-        type: jsPsychHtmlKeyboardResponse,
-        conditional_function: function() {
-            const n_warnings = jsPsych.data.get().last(1).select('n_warnings').values[0];
-            const warned = jsPsych.data.get().select('trialphase').values.includes("speed-accuracy");
-          if ((n_warnings == window.maxWarnings) && (!warned)) {
-            return true;
-          } else {
-            return false;
-          }
-        },
-        css_classes: ['instructions'],
-        timeline: [
-            {
-            stimulus: `<p>You might be making taking a little too long to make your choices.</p>
-            <p>We're interested in your quick judgments, so please try to respond a little faster—even if it feels a bit less precise.</p>
-            <p>Press either the right or left arrow to continue.</p>
-            `
-            }
-        ],
-        choices: ["arrowright", "arrowleft"],
-        data: {
-          trialphase: 'speed-accuracy'
+const kick_out_warning  = {
+    type: jsPsychHtmlKeyboardResponse,
+    conditional_function: function() {
+        const n_warnings = jsPsych.data.get().last(1).select('n_warnings').values[0];
+        const warned = jsPsych.data.get().select('trialphase').values.includes("speed-accuracy");
+        if ((n_warnings == window.maxWarnings) && (!warned)) {
+        return true;
+        } else {
+        return false;
         }
-    }    
-} else {
-    console.log("Prolific context detected");
-    console.log(window.context)
-
-    kick_out_warning = {
-        type: jsPsychHtmlKeyboardResponse,
-        conditional_function: function() {
-          if (jsPsych.data.get().last(1).select('n_warnings').values[0] >= window.maxWarnings) {
-            return true;
-          } else {
-            return false;
-          }
-        },
-        css_classes: ['instructions'],
-        timeline: [
-            {   
-                stimulus: '...',
-                trial_duration: 200,
-                on_finish: function(data) {
-                    // Save data
-                    saveDataREDCap(retry = 3);
-                    // Allow refresh
-                    window.removeEventListener('beforeunload', preventRefresh);
-                }
-            },
-            {
-            stimulus: `<p>You may not be following the study instructions as intended, as you didn't respond more than 15 times.</p>
-                <p>Unfortunately, you cannot continue with this study.</p>
-                <p>If you believe this is a mistake, please email haoyang.lu@ucl.ac.uk, explaining the circumstances.</p>
-                <p>Please return this study on <a href="https://app.prolific.com/">Prolific</a>.</p>
-                <p>You may now close this tab.</p>
-            `
-            }
-        ],
-        choices: ["NO_KEYS"],
-        data: {
-          trialphase: 'kick-out'
+    },
+    css_classes: ['instructions'],
+    timeline: [
+        {
+        stimulus: `<p>You might be making taking a little too long to make your choices.</p>
+        <p>We're interested in your quick judgments, so please try to respond a little faster—even if it feels a bit less precise.</p>
+        <p>Press either the right or left arrow to continue.</p>
+        `
         }
+    ],
+    choices: ["arrowright", "arrowleft"],
+    data: {
+        trialphase: 'speed-accuracy'
     }
-    
-}
-
+};
 /**
  * Combined kick-out trial timeline
  * Includes both pre-warning and final kick-out stages
