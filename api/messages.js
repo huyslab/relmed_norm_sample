@@ -29,9 +29,17 @@ const formatted_warning_msg = `
     ">Didn't catch a response - moving on</div>
 `;
 
+const MODULE_END_MESSAGE = `<p>Thank you for completing this module!</p>
+    <p>When you click next, your data will be uploaded to the secure server. This may take up to two minutes. Please don't close or refresh your browser at this time.</p>
+    <p>Once the data is uploaded, you will be redirected to Prolific.</p>
+    <p>The next module will immeidately be available to you. If you can't find it, please check you email for the invitation.</p>`
+
+const MODULE_START_MESSAGE = `<p>Welcome to this module!</p>
+    <p>Press continue to read the instructions for the first game.</p>`
+
 
 export const messages = {
-    full_battery: {
+    reversal: {
         start_message: (settings) => { 
             return [`<p><b>Thank you for taking part in this session!</b></p>
                 <p>The purpose of this session is to examine how people learn from positive and negative feedback while playing games.
@@ -46,14 +54,41 @@ export const messages = {
             ];
         },
         end_message: {
-            message: `<p>Thank you for completing this session!</p>
-                <p>Please call the experimenter.</p>`,
+            message: MODULE_END_MESSAGE,
             on_start: endExperiment
-        },
-        break_message: {
-            message: `<p>You can now take a short break.</p><p>Please ring the bell when you are ready to continue.</p>`,
-            key_forward: 'c',
-            show_clickable_nav: false
+        }
+    },
+    pilt_to_test: {
+        start_message: MODULE_START_MESSAGE,
+        end_message: {
+            message: MODULE_END_MESSAGE,
+            on_start: endExperiment
+        }
+    },
+    control:  {
+        start_message: MODULE_START_MESSAGE,
+        end_message: {
+            message: MODULE_END_MESSAGE,
+            on_start: endExperiment
+        }
+    },
+    wm:  {
+        start_message: MODULE_START_MESSAGE,
+        end_message: {
+            message: MODULE_END_MESSAGE,
+            on_start: endExperiment
+        }
+    },
+    quests:  {
+        start_message: MODULE_START_MESSAGE,
+        end_message: {
+            message: MODULE_END_MESSAGE,
+            on_start: `<p>Thank you for completing this session!</p>
+                <p>When you click next, your data will be uploaded to the secure server. This may take up to two minutes. Please don't close or refresh your browser at this time.</p>
+                <p>Once the data is uploaded, you will be redirected to Prolific.</p>` +
+                session == "wk0" ? `<p>The next session will take place in two weeks. You will receive a notification from Prolific when it is available. You will have three days to complete it.</p>` :
+                "",
+
         }
     },
     screening: {
