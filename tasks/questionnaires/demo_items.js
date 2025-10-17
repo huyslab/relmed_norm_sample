@@ -106,9 +106,9 @@ export const demographics_html = `
   <div class="survey-demo-prompt"><label for="menstrual-first-day">When was the first day of your last menstrual
       bleeding (period)?</label></div>
   <div class="survey-demo-response">
-    <input type="date" name="menstrual-first-day"><br>
-    <label><input type="radio" name="menstrual-first-day-option" value="Don't know" required>Don't know</label><br>
-    <label><input type="radio" name="menstrual-first-day-option" value="Not applicable (Not WOCBP)" required>Not
+    <input type="date" name="menstrual-first-day" data-group="menstrual-first-day-group"><br>
+    <label><input type="radio" name="menstrual-first-day-option" value="Don't know" data-group="menstrual-first-day-group">Don't know</label><br>
+    <label><input type="radio" name="menstrual-first-day-option" value="Not applicable (Not WOCBP)" data-group="menstrual-first-day-group">Not
       applicable (Not WOCBP)</label><br>
     <span style="font-size: 12px; font-style: italic; color: #666;">*WOCBP = Women of childbearing potential</span>
   </div>
@@ -119,9 +119,9 @@ export const demographics_html = `
   <div class="survey-demo-prompt"><label for="menstrual-cycle-length">What is the typical number of days between the
       start of one menstrual bleeding and the start of the next month?</label></div>
   <div class="survey-demo-response">
-    <input type="number" name="menstrual-cycle-length" min="1" max="100" size="10"> days<br>
-    <label><input type="radio" name="menstrual-cycle-length-option" value="Don't know" required>Don't know</label><br>
-    <label><input type="radio" name="menstrual-cycle-length-option" value="Not applicable (Not WOCBP)" required>Not
+    <input type="number" name="menstrual-cycle-length" min="1" max="100" size="10" data-group="menstrual-cycle-length-group"> days<br>
+    <label><input type="radio" name="menstrual-cycle-length-option" value="Don't know" data-group="menstrual-cycle-length-group">Don't know</label><br>
+    <label><input type="radio" name="menstrual-cycle-length-option" value="Not applicable (Not WOCBP)" data-group="menstrual-cycle-length-group">Not
       applicable (Not WOCBP)</label><br>
     <span style="font-size: 12px; font-style: italic; color: #666;">*WOCBP = Women of childbearing potential</span>
   </div>

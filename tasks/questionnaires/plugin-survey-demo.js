@@ -4,7 +4,7 @@ var jsPsychSurveyDemo = (function (jspsych) {
   const info = {
     name: 'survey-demo',
     description: '',
-    version: '1.1.0',
+    version: '1.2.0',
     parameters: {
       button_label: {
         type: jspsych.ParameterTypeSTRING,
@@ -179,6 +179,9 @@ var jsPsychSurveyDemo = (function (jspsych) {
       // Close container.
       html += '</div>';
 
+      // Add error message container
+      html += '<div id="validation-error" style="display: none; color: #c82333; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; margin: 15px 0; border-radius: 4px; text-align: center;"></div>';
+
       // Add submit button.
       html += '<div class="survey-demo-footer">';
       html += `<input type="submit" value="${trial.button_label}"></input>`;
@@ -199,11 +202,140 @@ var jsPsychSurveyDemo = (function (jspsych) {
         window.scrollTo(0, 0);
       }
 
+      // Add mutual exclusion logic for grouped fields
+      const setupMutualExclusion = function() {
+        const groups = {};
+
+        // Collect all fields by their data-group attribute
+        const groupedFields = display_element.querySelectorAll('[data-group]');
+        groupedFields.forEach(field => {
+          const group = field.getAttribute('data-group');
+          if (!groups[group]) {
+            groups[group] = [];
+          }
+          groups[group].push(field);
+        });
+
+        // Set up event listeners for each group
+        Object.keys(groups).forEach(groupName => {
+          const fields = groups[groupName];
+
+          // Find the primary input (date or number) and radio options
+          const primaryInput = fields.find(f => f.type === 'date' || f.type === 'number');
+          const radioInputs = fields.filter(f => f.type === 'radio');
+
+          if (primaryInput && radioInputs.length > 0) {
+            // When primary input (date/number) is filled, clear radio selection
+            primaryInput.addEventListener('input', function() {
+              if (this.value && this.value.trim() !== '') {
+                radioInputs.forEach(radio => {
+                  radio.checked = false;
+                });
+              }
+            });
+
+            // When any radio is selected, clear the primary input
+            radioInputs.forEach(radio => {
+              radio.addEventListener('change', function() {
+                if (this.checked) {
+                  primaryInput.value = '';
+                }
+              });
+            });
+          }
+        });
+      };
+
+      // Initialize mutual exclusion
+      setupMutualExclusion();
+
       display_element.querySelector('#jspsych-survey-demo').addEventListener('submit', function (event) {
 
         // Wait for response
         event.preventDefault();
 
+        // Custom validation for mutually exclusive fields (date/number vs radio)
+        const validateMutuallyExclusiveGroups = function() {
+          const groups = {};
+          const errorMessageEl = display_element.querySelector('#validation-error');
+
+          // Hide any previous error messages and remove highlights
+          errorMessageEl.style.display = 'none';
+          errorMessageEl.textContent = '';
+
+          // Remove previous error highlights from prompt and response divs
+          display_element.querySelectorAll('.survey-demo-prompt, .survey-demo-response').forEach(el => {
+            el.style.backgroundColor = '';
+            el.style.border = '';
+            el.style.outline = '';
+          });
+
+          // Collect all fields by their data-group attribute
+          const groupedFields = display_element.querySelectorAll('[data-group]');
+          groupedFields.forEach(field => {
+            const group = field.getAttribute('data-group');
+            if (!groups[group]) {
+              groups[group] = [];
+            }
+            groups[group].push(field);
+          });
+
+          // Validate each group
+          for (const groupName in groups) {
+            const fields = groups[groupName];
+            let hasValue = false;
+
+            for (const field of fields) {
+              if (field.type === 'radio') {
+                if (field.checked) {
+                  hasValue = true;
+                  break;
+                }
+              } else if (field.type === 'date' || field.type === 'number') {
+                if (field.value && field.value.trim() !== '') {
+                  hasValue = true;
+                  break;
+                }
+              }
+            }
+
+            if (!hasValue) {
+              // Find the label text for better error message
+              const row = fields[0].closest('.survey-demo-row');
+              const promptText = row ? row.querySelector('.survey-demo-prompt label')?.textContent : 'this question';
+
+              // Highlight the question prompt and response divs with red border
+              if (row) {
+                const promptDiv = row.querySelector('.survey-demo-prompt');
+                const responseDiv = row.querySelector('.survey-demo-response');
+
+                if (promptDiv) {
+                  promptDiv.style.backgroundColor = '#fde9e9ff';
+                }
+                if (responseDiv) {
+                  responseDiv.style.backgroundColor = '#fde9e9ff';
+                }
+              }
+
+              // Display inline error message
+              errorMessageEl.textContent = 'Please answer: ' + promptText.trim();
+              errorMessageEl.style.display = 'block';
+
+              // Scroll to the highlighted question
+              const scrollTarget = row?.querySelector('.survey-demo-prompt') || errorMessageEl;
+              scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+              return false;
+            }
+          }
+
+          return true;
+        };
+
+        // Run custom validation
+        if (!validateMutuallyExclusiveGroups()) {
+          return; // Stop form submission if validation fails
+        }
 
         // Measure response time
         var endTime = performance.now();
@@ -325,10 +457,63 @@ var jsPsychSurveyDemo = (function (jspsych) {
         // Extract all input fields
         const inputs = tempDiv.querySelectorAll('input, select, textarea');
         const processedRadioGroups = new Set();
+        const processedMutualGroups = new Set();
+
+        // Group fields by data-group attribute for mutually exclusive validation
+        const mutualGroups = {};
+        inputs.forEach(input => {
+          const group = input.getAttribute('data-group');
+          if (group) {
+            if (!mutualGroups[group]) {
+              mutualGroups[group] = [];
+            }
+            mutualGroups[group].push(input);
+          }
+        });
+
+        // Process mutually exclusive groups first
+        Object.keys(mutualGroups).forEach(groupName => {
+          const groupFields = mutualGroups[groupName];
+
+          // Find the primary input (date or number) and radio options
+          const primaryInput = groupFields.find(f => f.type === 'date' || f.type === 'number');
+          const radioInputs = groupFields.filter(f => f.type === 'radio');
+
+          if (primaryInput && radioInputs.length > 0) {
+            // Randomly decide to fill either primary input or radio option
+            const usePrimaryInput = this.jsPsych.randomization.sampleWithReplacement([true, false], 1)[0];
+
+            if (usePrimaryInput) {
+              // Fill the date or number input
+              const name = primaryInput.getAttribute('name');
+              if (primaryInput.type === 'number') {
+                const min = parseInt(primaryInput.getAttribute('min')) || 0;
+                const max = parseInt(primaryInput.getAttribute('max')) || 100;
+                responses[name] = this.jsPsych.randomization.randomInt(min, max);
+              } else if (primaryInput.type === 'date') {
+                const date = new Date();
+                date.setDate(date.getDate() - this.jsPsych.randomization.randomInt(1, 60));
+                responses[name] = date.toISOString().split('T')[0];
+              }
+              processedMutualGroups.add(primaryInput.getAttribute('name'));
+            } else {
+              // Fill one of the radio options
+              const radioName = radioInputs[0].getAttribute('name');
+              const values = radioInputs.map(r => r.value).filter(v => v);
+              if (values.length > 0) {
+                responses[radioName] = this.jsPsych.randomization.sampleWithoutReplacement(values, 1)[0];
+              }
+              processedRadioGroups.add(radioName);
+            }
+          }
+        });
 
         inputs.forEach(input => {
           const name = input.getAttribute('name');
           if (!name) return;
+
+          // Skip if already processed as part of a mutual group
+          if (processedMutualGroups.has(name)) return;
 
           const type = input.type || input.tagName.toLowerCase();
 
@@ -363,14 +548,14 @@ var jsPsychSurveyDemo = (function (jspsych) {
               responses[name].push(input.value || 'checked');
             }
           }
-          // Handle number inputs
-          else if (type === 'number') {
+          // Handle number inputs (that aren't part of mutual groups)
+          else if (type === 'number' && !input.getAttribute('data-group')) {
             const min = parseInt(input.getAttribute('min')) || 0;
             const max = parseInt(input.getAttribute('max')) || 100;
             responses[name] = this.jsPsych.randomization.randomInt(min, max);
           }
-          // Handle date inputs
-          else if (type === 'date') {
+          // Handle date inputs (that aren't part of mutual groups)
+          else if (type === 'date' && !input.getAttribute('data-group')) {
             // Generate a date within the past 60 days
             const date = new Date();
             date.setDate(date.getDate() - this.jsPsych.randomization.randomInt(1, 60));
