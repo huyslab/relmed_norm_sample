@@ -4,7 +4,7 @@ var jsPsychSurveyDemo = (function (jspsych) {
   const info = {
     name: 'survey-demo',
     description: '',
-    version: '1.0.1',
+    version: '1.1.0',
     parameters: {
       button_label: {
         type: jspsych.ParameterTypeSTRING,
@@ -301,6 +301,195 @@ var jsPsychSurveyDemo = (function (jspsych) {
       }
 
     }
+
+    // Simulation method
+    simulate(trial, simulation_mode, simulation_options, load_callback) {
+      if (simulation_mode == "data-only") {
+          load_callback();
+          this.simulate_data_only(trial, simulation_options);
+      }
+      if (simulation_mode == "visual") {
+          this.simulate_visual(trial, simulation_options, load_callback);
+      }
+    }
+
+    create_simulation_data(trial, simulation_options) {
+      const responses = {};
+
+      // Generate simulated responses based on the form fields
+      if (trial.body !== null) {
+        // Parse the custom HTML body to extract form fields
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = trial.body;
+
+        // Extract all input fields
+        const inputs = tempDiv.querySelectorAll('input, select, textarea');
+        const processedRadioGroups = new Set();
+
+        inputs.forEach(input => {
+          const name = input.getAttribute('name');
+          if (!name) return;
+
+          const type = input.type || input.tagName.toLowerCase();
+
+          // Handle radio buttons (only process each group once)
+          if (type === 'radio') {
+            if (processedRadioGroups.has(name)) return;
+            processedRadioGroups.add(name);
+
+            // Get all radio options for this name
+            const radioOptions = tempDiv.querySelectorAll(`input[name="${name}"]`);
+            const values = Array.from(radioOptions).map(r => r.value).filter(v => v);
+
+            if (values.length > 0) {
+              responses[name] = this.jsPsych.randomization.sampleWithoutReplacement(values, 1)[0];
+
+              // Check if "Other" option has associated text input
+              if (responses[name] === 'Other') {
+                const otherInput = tempDiv.querySelector(`input[name="${name}-other"]`);
+                if (otherInput) {
+                  responses[`${name}-other`] = 'simulated response';
+                }
+              }
+            }
+          }
+          // Handle checkboxes
+          else if (type === 'checkbox') {
+            if (!responses[name]) {
+              responses[name] = [];
+            }
+            // Randomly decide to check this box
+            if (this.jsPsych.randomization.sampleWithReplacement([true, false], 1)[0]) {
+              responses[name].push(input.value || 'checked');
+            }
+          }
+          // Handle number inputs
+          else if (type === 'number') {
+            const min = parseInt(input.getAttribute('min')) || 0;
+            const max = parseInt(input.getAttribute('max')) || 100;
+            responses[name] = this.jsPsych.randomization.randomInt(min, max);
+          }
+          // Handle date inputs
+          else if (type === 'date') {
+            // Generate a date within the past 60 days
+            const date = new Date();
+            date.setDate(date.getDate() - this.jsPsych.randomization.randomInt(1, 60));
+            responses[name] = date.toISOString().split('T')[0];
+          }
+          // Handle text inputs and textareas
+          else if (type === 'text' || type === 'textarea') {
+            // Skip if it's an "other" field that will be handled with radio
+            if (!name.endsWith('-other') && !name.includes('free-response')) {
+              responses[name] = 'simulated text response';
+            }
+          }
+          // Handle select dropdowns
+          else if (type === 'select' || input.tagName.toLowerCase() === 'select') {
+            const options = Array.from(input.querySelectorAll('option')).map(o => o.value).filter(v => v);
+            if (options.length > 0) {
+              responses[name] = this.jsPsych.randomization.sampleWithoutReplacement(options, 1)[0];
+            }
+          }
+        });
+
+        // Clean up empty checkbox arrays
+        Object.keys(responses).forEach(key => {
+          if (Array.isArray(responses[key]) && responses[key].length === 0) {
+            delete responses[key];
+          }
+        });
+      } else {
+        // Simulate default demographics form responses
+        responses.age = this.jsPsych.randomization.randomInt(18, 100);
+        responses.sex = this.jsPsych.randomization.sampleWithoutReplacement(['Female', 'Male'], 1)[0];
+        responses.gender = this.jsPsych.randomization.sampleWithoutReplacement(['Female', 'Male', 'Trans-female', 'Trans-male', 'Non-binary', 'Other'], 1)[0];
+        if (responses.gender === 'Other') {
+          responses['gender-free-response'] = 'simulated response';
+        }
+        responses.education = this.jsPsych.randomization.sampleWithoutReplacement(['No Education', 'Primary', 'Secondary', 'Further', 'Degree', 'Postgraduate', 'Other', 'Unable to specify', 'Prefer not to say'], 1)[0];
+        if (responses.education === 'Other') {
+          responses['education-other'] = 'simulated education';
+        }
+        responses.employment = this.jsPsych.randomization.sampleWithoutReplacement(['Full time employment', 'Part time employment', 'Retired', 'Unemployed/unable to work', 'In full-time education', 'In part-time education', 'Other', 'Unable to specify', 'Prefer not to say'], 1)[0];
+        if (responses.employment === 'Other') {
+          responses['employment-other'] = 'simulated employment';
+        }
+        responses.financial = this.jsPsych.randomization.sampleWithoutReplacement(['Living comfortably', 'Doing alright', 'Just about getting by', 'Finding it difficult to make ends meet', 'Finding it very difficult to make ends meet', 'Prefer not to say'], 1)[0];
+        responses.income = this.jsPsych.randomization.sampleWithoutReplacement(['£0', '£1 to £9,999', '£10,000 to £24,999', '£25,000 to £49,999', '£50,000 to £74,999', '£75,000 to £99,999', '£100,000 or more', 'Prefer not to say'], 1)[0];
+
+        // Menstrual cycle questions - randomly decide if applicable
+        const menstrualApplicable = this.jsPsych.randomization.sampleWithReplacement([true, false], 1)[0];
+        if (menstrualApplicable) {
+          // Generate a date in the past month
+          const date = new Date();
+          date.setDate(date.getDate() - this.jsPsych.randomization.randomInt(1, 28));
+          responses['menstrual-first-day'] = date.toISOString().split('T')[0];
+          responses['menstrual-cycle-length'] = this.jsPsych.randomization.randomInt(21, 35);
+        } else {
+          responses['menstrual-first-day-option'] = "Not applicable (Not WOCBP)";
+          responses['menstrual-cycle-length-option'] = "Not applicable (Not WOCBP)";
+        }
+      }
+
+      const rt = this.jsPsych.randomization.sampleExGaussian(5000, 1000, 1 / 2000, true);
+
+      const default_data = {
+        responses: responses,
+        rt: rt
+      };
+
+      const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
+      this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
+      return data;
+    }
+
+    simulate_data_only(trial, simulation_options) {
+      const data = this.create_simulation_data(trial, simulation_options);
+      this.jsPsych.finishTrial(data);
+    }
+
+    simulate_visual(trial, simulation_options, load_callback) {
+      const data = this.create_simulation_data(trial, simulation_options);
+      const display_element = this.jsPsych.getDisplayElement();
+      this.trial(display_element, trial);
+      load_callback();
+
+      // Simulate filling out the form
+      const form = display_element.querySelector('#jspsych-survey-demo');
+      const responses = data.responses;
+
+      // Function to set form field values with delays
+      const setFieldWithDelay = (name, value, delay) => {
+        const field = form.querySelector(`[name="${name}"]`);
+          if (field) {
+            if (field.type === 'radio') {
+              const radioButton = form.querySelector(`input[name="${name}"][value="${value}"]`);
+              if (radioButton) {
+                this.jsPsych.pluginAPI.clickTarget(radioButton, delay);
+              }
+            } else if (field.type === 'number' || field.type === 'text' || field.type === 'date') {
+              field.value = value;
+            }
+          }
+      };
+
+      // Set all fields with progressive delays
+      let delay = 0;
+      const delayIncrement = data.rt / (Object.keys(responses).length);
+
+      for (const [name, value] of Object.entries(responses)) {
+        delay += delayIncrement;
+        setFieldWithDelay(name, value, delay);
+      }
+
+      // Submit the form
+      this.jsPsych.pluginAPI.clickTarget(
+        form.querySelector('input[type="submit"]'),
+        data.rt
+      );
+    }
+
+
   }
   SurveyDemoPlugin.info = info;
 
