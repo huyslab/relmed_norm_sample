@@ -180,7 +180,7 @@ var jsPsychSurveyDemo = (function (jspsych) {
       html += '</div>';
 
       // Add error message container
-      html += '<div id="validation-error" style="display: none; color: #c82333; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; margin: 15px 0; border-radius: 4px; text-align: center;"></div>';
+      html += '<div id="validation-error"></div>';
 
       // Add submit button.
       html += '<div class="survey-demo-footer">';
@@ -310,10 +310,10 @@ var jsPsychSurveyDemo = (function (jspsych) {
                 const responseDiv = row.querySelector('.survey-demo-response');
 
                 if (promptDiv) {
-                  promptDiv.style.backgroundColor = '#fde9e9ff';
+                  promptDiv.style.backgroundColor = '#fde9e9';
                 }
                 if (responseDiv) {
-                  responseDiv.style.backgroundColor = '#fde9e9ff';
+                  responseDiv.style.backgroundColor = '#fde9e9';
                 }
               }
 
