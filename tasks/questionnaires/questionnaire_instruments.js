@@ -443,6 +443,11 @@ export const demographics = (i, total) => {
     },
     on_start: () => {
       updateState("demographics_start");
+    },
+    simulation_options: {
+      data: {
+        rt: 1000
+      }
     }
   };
 };
