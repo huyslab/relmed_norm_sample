@@ -821,6 +821,7 @@ export function createControlInstructionsTimeline(settings) {
         type: jsPsychPredictHomeBase,
         ship: "blue",
         predict_decision: null,
+        island_path: `./assets/images/control/session-specific/${settings.session}`,
         choices: settings.session === "screening" ? ["i1", "i2", "i3"] : ["i2", "i3", "i4", "i1"],
         post_trial_gap: 0,
         on_load: function () {
