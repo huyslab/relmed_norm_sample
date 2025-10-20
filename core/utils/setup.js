@@ -180,8 +180,10 @@ const enterExperiment = {
         // Save all URL parameters to jsPsych data for experiment tracking
         saveUrlParameters();
 
+        window.module_start_time = format_date_from_string(jsPsych.getStartTime());
         jsPsych.data.addProperties({
-            n_warnings: 0
+            n_warnings: 0,
+            module_start_time: module_start_time
         })
 
         // Prevent participant from terminating experiment unless in debug mode
