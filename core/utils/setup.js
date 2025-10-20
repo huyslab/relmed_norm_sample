@@ -168,6 +168,30 @@ function saveUrlParameters() {
 }
 
 /**
+ * Converts a date string into a formatted string with date and time.
+ * @param {string} s - The date string to format.
+ * @returns {string} Formatted date-time string in the format "YYYY-MM-DD_HH:MM:SS".
+ */
+function format_date_from_string(s){
+    const dateTime = new Date(s);
+
+    // Get individual components
+    const year = dateTime.getFullYear();
+    const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const day = String(dateTime.getDate()).padStart(2, '0');
+    const hours = String(dateTime.getHours()).padStart(2, '0');
+    const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+    const seconds = String(dateTime.getSeconds()).padStart(2, '0');
+
+    // Format the date and time
+    const formattedDate = `${year}-${month}-${day}`;
+    const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+    return formattedDate + "_" + formattedTime
+}
+
+
+/**
  * Creates a jsPsych fullscreen trial that initiates the experiment
  * Handles URL parameter saving and participant termination prevention
  * @type {Object} jsPsych trial configuration for entering fullscreen mode
