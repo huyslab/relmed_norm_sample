@@ -3,7 +3,7 @@
  * Handles bonus computation and payment tracking across different experimental modules
  */
 
-import { postToParent } from "./data-handling.js";
+import { postToParent, updateState } from "./data-handling.js";
 
 /**
  * Retrieves task-specific bonus data based on the task type
@@ -66,46 +66,40 @@ function deepCopySessionState() {
  * @returns {number} Total bonus amount in GBP
  */
 
-function computeTotalBonus() {
+function computeTotalBonus(module) {
+
     // Maximum bonus amounts for each task type
-    const max_bonus = {
-        "pilt-to-test": 2.45,
-        "reversal": 0.5,
-        "wm": 0.8,
-        "control": 1.25
-    }[window.task];
+    const min_bonus = module.max_bonus * module.min_prop_bonus;
 
-    const min_prop_bonus = 0.6; // Minimum proportion of maximum bonus guaranteed
-    const min_bonus = max_bonus * min_prop_bonus;
+    // Initialize cumulative bonus values
+    let totalEarned = 0;
+    let totalMin = 0;
+    let totalMax = 0;
 
-    const session_state_obj = deepCopySessionState();
-
-    // Initialize the task-specific object if it doesn't exist
-    if (!session_state_obj[window.task]) {
-        session_state_obj[window.task] = {
-            earned: 0,
-            min: 0,
-            max: 0
-        };
+    // Iterate over module elements
+    for (const element of module.elements) {
+        // Check if element is a task
+        if (element.type === "task") {
+            // Get the task object
+            const task = element.__task;
+            
+            // Call the computeBonus function if it exists
+            if (task.computeBonus && typeof task.computeBonus === 'function') {
+                const bonusResult = task.computeBonus();
+                
+                // Handle the result (could be 0, object, or array)
+                if (bonusResult && typeof bonusResult === 'object') {
+                    totalEarned += bonusResult.earned || 0;
+                    totalMin += bonusResult.min || 0;
+                    totalMax += bonusResult.max || 0;
+                }
+            }
+        }
     }
-    
-    // Get the previous bonus values from session state for this specific task
-    const prevBonus = {
-        earned: session_state_obj[window.task].earned || 0,
-        min: session_state_obj[window.task].min || 0,
-        max: session_state_obj[window.task].max || 0
-    };
-
-    const taskBonus = getTaskBonusData(window.task);
-
-    // Calculate the total bonus based on the current bonus and last recorded bonus
-    const earned = prevBonus.earned + taskBonus.earned;
-    const min = prevBonus.min + taskBonus.min;
-    const max = prevBonus.max + taskBonus.max;
 
     // Calculate proportion of performance between min and max possible scores
-    const prop = Math.max(0, Math.min(1, (earned - min) / (max - min)));
-    const totalBonus = prop * (max_bonus - min_bonus) + min_bonus;
+    const prop = Math.max(0, Math.min(1, (totalEarned - totalMin) / (totalMax - totalMin)));
+    const totalBonus = prop * (module.max_bonus - min_bonus) + min_bonus;
 
     // Add insurance to ensure bonus is never below minimum or NaN
     return Number.isNaN(totalBonus) ? min_bonus : totalBonus;
@@ -167,19 +161,19 @@ function updateBonusState(settings) {
  * Shows final bonus amount and handles bonus state updates
  */
 
-const bonus_trial = {
-    type: jsPsychHtmlButtonResponse,
-    css_classes: ['instructions'],
-    stimulus: function (trial) {
-        // Determine context-appropriate terminology
-        let event = window.context === "relmed" ? "module" : "session";
-        let stimulus =  `Congratulations! You are nearly at the end of this ${event}!`      
-        const total_bonus = computeTotalBonus();
-        stimulus += `
-                <p>It is time to reveal your total bonus payment for this ${event}.</p>
-                <p>Altogether, you will earn an extra ${total_bonus.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' })}.</p>
-            `;
-        return stimulus;
+function bonusTrial(module) {
+    return {
+        type: jsPsychHtmlButtonResponse,
+        css_classes: ['instructions'],
+        stimulus: function (trial) {
+            // Determine context-appropriate terminology
+            let stimulus =  `Congratulations! You are nearly at the end of this module!`      
+            const total_bonus = computeTotalBonus(module);
+            stimulus += `
+                    <p>It is time to reveal your total bonus payment for this module.</p>
+                    <p>Altogether, you will earn an extra ${total_bonus.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' })}.</p>
+                `;
+            return stimulus;
     },
     choices: ['Continue'],
     data: { trialphase: 'bonus_trial' },
@@ -187,7 +181,7 @@ const bonus_trial = {
       updateState(`bonus_trial`);
     },
     on_finish: (data) => {
-      const bonus = computeTotalBonus().toFixed(2);
+      const bonus = computeTotalBonus(module).toFixed(2);
       
       data.bonus = bonus;
 
@@ -200,6 +194,7 @@ const bonus_trial = {
       simulate: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' // Simulate the bonus trial in development mode
     }
   };
+}
 
 // Export functions for use in other modules
 export {
@@ -208,5 +203,5 @@ export {
     deepCopySessionState,
     computeTotalBonus,
     updateBonusState,
-    bonus_trial
+    bonusTrial
 };

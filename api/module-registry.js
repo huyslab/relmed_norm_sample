@@ -12,8 +12,11 @@ export const ModuleRegistry = {
             { type: "instructions", config: { text: "start_message" } },
             { type: "task", name: "reversal"},
             { type: "task", name: "acceptability_judgment", config: { task_name: "reversal", game_description: "squirrel game" } },
+            { type: "bonus" },
             { type: "instructions", config: { text: "end_message" } }
-        ]
+        ],
+        max_bonus: 0.26,
+        min_prop_bonus: 0.6
     },
     pilt_to_test: {
         name: "Pre-PILT conditioning, PILT, vigour, PIT and tests",
@@ -33,8 +36,11 @@ export const ModuleRegistry = {
             { type: "task", name: "acceptability_judgment", config: { task_name: "PIT", game_description: "piggy-bank game in cloudy space" } },
             { type: "task", name: "vigour_test"},
             { type: "task", name: "post_PILT_test"},
+            { type: "bonus" },
             { type: "instructions", config: { text: "end_message" } }
-        ]
+        ],
+        max_bonus: 1.31,
+        min_prop_bonus: 0.6
     },
     control: {
         name: "Control Task",
@@ -46,8 +52,11 @@ export const ModuleRegistry = {
             { type: "instructions", config: { text: "start_message" } },
             { type: "task", name: "control"},
             { type: "task", name: "acceptability_judgment", config: { task_name: "control", game_description: "shipping game" } },
+            { type: "bonus" },
             { type: "instructions", config: { text: "end_message" } }
-        ]
+        ],
+        max_bonus: 0.66,
+        min_prop_bonus: 0.6
     },
     wm: {
         name: "Working Memory Task",
@@ -60,8 +69,11 @@ export const ModuleRegistry = {
             { type: "task", name: "WM" },
             { type: "task", name: "post_WM_test"},
             { type: "task", name: "acceptability_judgment", config: { task_name: "wm", game_description: "one-card game you just completed" } },
+            { type: "bonus" },
             { type: "instructions", config: { text: "end_message" } }
-        ]
+        ],
+        max_bonus: 0.42,
+        min_prop_bonus: 0.6
     },
     quests: {
         name: "Questionnaires and Open Text",
