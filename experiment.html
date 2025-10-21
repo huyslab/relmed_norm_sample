@@ -97,11 +97,7 @@
 
         // Initialize jsPsych
         window.jsPsych = initJsPsych({
-            display_element: 'display_element',
-            on_finish: function (data) {
-                // Display results
-                jsPsych.getDisplayElement().innerHTML = session == "screening" ? '<p>Thank you for participating! You may now close this tab.</p>' : '<p>Thank you for participating! Please call the experimenter.</p>';
-            }
+            display_element: 'display_element'
         });
 
         // Configurations
