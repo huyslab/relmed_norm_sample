@@ -67,6 +67,7 @@ function deepCopySessionState() {
  */
 
 function computeTotalBonus(module) {
+
     // Maximum bonus amounts for each task type
     const min_bonus = module.max_bonus * module.min_prop_bonus;
 
@@ -81,7 +82,8 @@ function computeTotalBonus(module) {
             // Check if element is a task
             if (element.type === "task") {
                 // Get the task object
-                const task = element.task || element;
+                const task = element.__task;
+                console.log(element)
                 
                 // Call the computeBonus function if it exists
                 if (task.computeBonus && typeof task.computeBonus === 'function') {
@@ -162,19 +164,19 @@ function updateBonusState(settings) {
  * Shows final bonus amount and handles bonus state updates
  */
 
-const bonus_trial = {
-    type: jsPsychHtmlButtonResponse,
-    css_classes: ['instructions'],
-    stimulus: function (trial) {
-        // Determine context-appropriate terminology
-        let event = window.context === "relmed" ? "module" : "session";
-        let stimulus =  `Congratulations! You are nearly at the end of this ${event}!`      
-        const total_bonus = computeTotalBonus();
-        stimulus += `
-                <p>It is time to reveal your total bonus payment for this ${event}.</p>
-                <p>Altogether, you will earn an extra ${total_bonus.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' })}.</p>
-            `;
-        return stimulus;
+function bonusTrial(module) {
+    return {
+        type: jsPsychHtmlButtonResponse,
+        css_classes: ['instructions'],
+        stimulus: function (trial) {
+            // Determine context-appropriate terminology
+            let stimulus =  `Congratulations! You are nearly at the end of this module!`      
+            const total_bonus = computeTotalBonus(module);
+            stimulus += `
+                    <p>It is time to reveal your total bonus payment for this module.</p>
+                    <p>Altogether, you will earn an extra ${total_bonus.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' })}.</p>
+                `;
+            return stimulus;
     },
     choices: ['Continue'],
     data: { trialphase: 'bonus_trial' },
@@ -182,7 +184,7 @@ const bonus_trial = {
       updateState(`bonus_trial`);
     },
     on_finish: (data) => {
-      const bonus = computeTotalBonus().toFixed(2);
+      const bonus = computeTotalBonus(module).toFixed(2);
       
       data.bonus = bonus;
 
@@ -195,6 +197,7 @@ const bonus_trial = {
       simulate: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' // Simulate the bonus trial in development mode
     }
   };
+}
 
 // Export functions for use in other modules
 export {
@@ -203,5 +206,5 @@ export {
     deepCopySessionState,
     computeTotalBonus,
     updateBonusState,
-    bonus_trial
+    bonusTrial
 };
