@@ -226,16 +226,30 @@ var jsPsychSurveyDemo = (function (jspsych) {
 
           if (primaryInput && radioInputs.length > 0) {
             // When primary input (date/number) is filled, clear radio selection
-            primaryInput.addEventListener('input', function() {
+            // Use both 'input' and 'change' events for better Safari compatibility
+            const clearRadios = function() {
               if (this.value && this.value.trim() !== '') {
                 radioInputs.forEach(radio => {
                   radio.checked = false;
                 });
               }
-            });
+            };
+            primaryInput.addEventListener('input', clearRadios);
+            primaryInput.addEventListener('change', clearRadios);
+            // Also handle blur for Safari
+            primaryInput.addEventListener('blur', clearRadios);
 
             // When any radio is selected, clear the primary input
             radioInputs.forEach(radio => {
+              radio.addEventListener('click', function() {
+                // Use setTimeout to ensure the click completes first in Safari
+                setTimeout(() => {
+                  if (this.checked) {
+                    primaryInput.value = '';
+                  }
+                }, 0);
+              });
+
               radio.addEventListener('change', function() {
                 if (this.checked) {
                   primaryInput.value = '';
