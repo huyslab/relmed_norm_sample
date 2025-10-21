@@ -92,6 +92,8 @@ function saveDataREDCap(retry = 1, extra_fields = {}, callback = () => {}) {
         }
     ]);
 
+    console.log(window.module)
+
     const data_message = {
         data: {
             record_id: window.participantID + "_" + window.module_start_time,
@@ -141,7 +143,7 @@ function saveDataREDCap(retry = 1, extra_fields = {}, callback = () => {}) {
             participant_id: window.participantID,
             sitting_start_time: window.module_start_time,
             session: window.session,
-            module: window.task,
+            module: window.module,
             data: combined_data
         }])
     
