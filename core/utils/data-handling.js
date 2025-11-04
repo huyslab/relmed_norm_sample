@@ -76,7 +76,7 @@ function updateState(state, save_data = true) {
  * @param {Object} extra_fields - Additional fields to include in data submission
  * @param {Function} callback - Callback function to execute after successful submission
  */
-function saveDataREDCap(retry = 1, extra_fields = {}, callback = () => {}) {
+function saveDataREDCap(retry = 1, extra_fields = {}, callback = () => {}, error_callback = () => {}) {
 
     // Get data, remove stimulus string to reduce payload size
     const jspsych_data = jsPsych.data.get().ignore('stimulus').json();
@@ -173,11 +173,11 @@ function saveDataREDCap(retry = 1, extra_fields = {}, callback = () => {}) {
             if (retry > 0) {
                 console.log('Retrying to submit data...');
                 setTimeout(function(){
-                    saveDataREDCap(retry - 1, extra_fields, callback);
+                    saveDataREDCap(retry - 1, extra_fields, callback, error_callback);
                 }, 1000);
             } else {
                 console.error('Failed to submit data after retrying.');
-                callback(error); // Call the callback function with the error if retries are exhausted
+                error_callback(error); // Call the callback function with the error if retries are exhausted
             }
         });
     }
@@ -204,6 +204,9 @@ function endExperiment() {
         },
         () => {
             window.location.href = "https://app.prolific.com/submissions/complete?cc=C1AMSNUV"
+        },
+        () => {
+            window.location.href = "https://app.prolific.com/submissions/complete?cc=C1AMDATA"
         }
     );
 }
