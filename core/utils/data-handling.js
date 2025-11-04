@@ -173,7 +173,7 @@ function saveDataREDCap(retry = 1, extra_fields = {}, callback = () => {}) {
             if (retry > 0) {
                 console.log('Retrying to submit data...');
                 setTimeout(function(){
-                    saveDataREDCap(retry - 1);
+                    saveDataREDCap(retry - 1, extra_fields, callback);
                 }, 1000);
             } else {
                 console.error('Failed to submit data after retrying.');
