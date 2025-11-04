@@ -198,7 +198,7 @@ function endExperiment() {
 
     // Save data with end task message for RELMED context
     saveDataREDCap(
-        10, 
+        66, 
         {
             message: "endTask"
         },
